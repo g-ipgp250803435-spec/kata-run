@@ -417,15 +417,15 @@ body.light-mode{background:linear-gradient(180deg,#f9fcff,#eef6ff 40%,#f9fcff);c
 .media-stage>.media-play[hidden],.media-stage>.media-error[hidden]{display:none!important}
 .media-stage>.media-error{position:absolute;z-index:4;inset:auto 10px 10px;max-width:calc(100% - 20px);background:#fff6f3;color:#8a2820;padding:12px;border:2px solid #e7ada1;border-radius:10px;font-size:.8rem;line-height:1.4;font-weight:700}
 .cue{cursor:default;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;position:relative}
-.cue-choice{appearance:none;-webkit-appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;width:100%;flex:1;min-height:112px;border:0;background:transparent;color:inherit;text-align:center;cursor:pointer;padding:8px 7px 3px;border-radius:13px}
-.cue-choice .num{position:absolute;z-index:4;top:12px;left:12px;margin:0;width:40px;height:40px;box-shadow:0 3px 12px #15324723;pointer-events:none}
+.cue-choice{appearance:none;-webkit-appearance:none;position:static;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;width:100%;flex:1;min-height:112px;border:0;background:transparent;color:inherit;text-align:center;cursor:pointer;padding:8px 7px 3px;border-radius:13px}
+.cue-choice .num{position:absolute;z-index:10;top:14px;left:14px;margin:0;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#0d233a;color:#ffffff;font-weight:900;font-size:1.15rem;border:2.5px solid #ffffff;box-shadow:0 4px 14px rgba(0,0,0,.35),0 1px 3px rgba(0,0,0,.2);pointer-events:none}
 .cue-choice h3{margin:8px 0 0}
 .cue-choice p{margin:0 0 5px}
 .cue-choice:focus-visible{outline:3px solid #1368bf;outline-offset:2px}
 .cue.is-selected{border:4px solid var(--teal);padding:16px;box-shadow:0 0 0 4px #5fc9df55,0 14px 28px #1a577724}
 .cue.is-selected .cue-choice h3{color:#075d78}
 /* Cue hover & focus must never obscure native video controls. */
-.cue .media-stage{z-index:1}.cue .cue-choice{z-index:0}
+.cue .media-stage{z-index:1}
 @media(max-width:750px){.exercise .media-stage,.cue .media-stage{height:clamp(220px,54vw,340px)}.cue-choice{min-height:100px}.media-stage>.media-play{font-size:.78rem}}
 @media(max-width:420px){.exercise .media-stage,.cue .media-stage{height:240px}}
 
