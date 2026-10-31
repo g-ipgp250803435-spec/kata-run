@@ -1,0 +1,126 @@
+================================================================================
+KATA//RUN (KIT DIGITAL) - COMPREHENSIVE APPLICATION ARCHITECTURE & DOCUMENTATION
+================================================================================
+
+1. OVERVIEW & PURPOSE
+--------------------------------------------------------------------------------
+Kata//Run (Kit Digital) is a gamified progressive web application (PWA) designed
+by Cikgu Aieryl for Malaysian primary education. Its goal is to build fine motor
+skills, reinforce correct pencil grip, and motivate lowercase handwriting practice
+("Jari Kuat, Tulisan Hebat! Huruf Kecil. Pengembaraan Besar").
+
+The web app integrates gamified learning through four structured modules:
+  01 / PREP    - Senam Jari (Finger warm-up workouts)
+  02 / LEARN   - Lihat & Ikut (Pencil grip visual cues and ergonomic techniques)
+  03 / PLAY    - Jom Tulis / Larian Huruf (An endless runner arcade game featuring
+                 letter collection, obstacle dodging, and handwriting canvas tracing)
+  04 / REWARD  - Bintang Saya (Gamification dashboard, star tracker, badge unlocks,
+                 and offline/online progress synchronization)
+
+
+2. CODEBASE & FILE STRUCTURE
+--------------------------------------------------------------------------------
+- index.html:
+    Contains the entire single-page application structure, inline CSS styles,
+    SVG brand icons and illustrations, HTML layouts for all 4 modules, modal dialogs,
+    Web Audio API engines (SFX and 8-bit BGM chiptune synthesizer), canvas runner
+    game loop, handwriting trace overlay, teacher controls, and media studio.
+- service-worker.js:
+    Implements offline caching via the Cache API using a cache manifest containing:
+    './', './index.html', './manifest.webmanifest', './favicon.svg', './favicon.ico',
+    './icons/icon-192.png', and './icons/icon-512.png'. Intercepts fetch requests to
+    deliver instant offline access with network fallback.
+- manifest.webmanifest:
+    Standard Web App Manifest defining display mode ('standalone'), theme colors,
+    background color, name, short name, and application icon references.
+- favicon.svg:
+    Vector favicon featuring the app's brand badge, neon lime background, and
+    navy 'K' lettermark.
+- favicon.ico:
+    Standard multi-resolution (16x16 and 32x32) ICO binary icon for browser tab
+    compatibility.
+- supabase-config.js:
+    Configuration stub and credentials placeholder for connecting the application
+    to a Supabase cloud database backend for multi-student synchronization.
+- icons/:
+    Directory containing PNG PWA application icons (192x192 and 512x512).
+
+
+3. MODULES BREAKDOWN
+--------------------------------------------------------------------------------
+Module 01: Senam Jari (Warm-Up Exercises)
+  - Designed for fine-motor muscle preparation before handwriting.
+  - Three guided physical exercises:
+      1. Ramasan Span (Grip squeeze)
+      2. Ketuk Jari (Finger tapping)
+      3. Renggangan Labah-labah (Spider finger stretches)
+  - Interactive timer with start, pause, and reset controls.
+  - Teacher verification toggle requiring educator sign-off or auto-progression.
+
+Module 02: Lihat & Ikut (Pencil Grip & Visual Cues)
+  - Demonstrates ergonomic pencil grasp techniques:
+      1. Cengkaman Tripod Dinamik (Dynamic Tripod Grip)
+      2. Sudut 45 Darjah (45-degree paper angle)
+      3. Pergelangan Tangan Santai (Relaxed wrist on surface)
+  - Step-by-step interactive cues with audio narration cues and Malay voice prompts.
+  - Audio support using Web Speech API for auditory learning.
+
+Module 03: Jom Tulis / Larian Huruf (3D-Style Endless Runner & Tracing)
+  - Canvas-based 3-lane pseudo-3D endless runner arcade game.
+  - Player controls a superhero runner jumping over hurdles, sliding under barriers,
+    switching lanes (left/center/right), and collecting letters and coins.
+  - Target words progression (e.g., 'bola', 'buku', 'daun', 'ikan', 'meja', 'topi').
+  - Tracing Overlay:
+      When all letters of a word are gathered, an in-game handwriting canvas overlay
+      appears, pausing the runner so the student traces the completed word using touch,
+      stylus, or mouse. Once verified, bonus points and coins are awarded.
+  - Power-ups:
+      Shield (temporary invulnerability), Magnet (attracts nearby coins/letters),
+      Boost (high-speed dash).
+  - Scoring & Health:
+      3 lives per run, combo streak counters, distance score, and coins collected.
+
+Module 04: Bintang Saya (Rewards & Progress Dashboard)
+  - Visual star matrix reflecting completed tasks and daily goals.
+  - Level progression, XP points, and unlocked achievement badges.
+  - Summary stats: total words written, practice minutes, coins earned, best score.
+  - Student identity management (custom student ID input for classroom tracking).
+
+
+4. AUDIO SYSTEM & 8-BIT ARCADE BGM
+--------------------------------------------------------------------------------
+- Sound Effects (SFX):
+    Synthesized in real-time via the Web Audio API without external audio files.
+    Includes coin pickups, jump whooshes, slide swooshes, hit impacts, fanfare,
+    and button tap clicks.
+- 8-Bit Arcade Background Music (ArcadeBGM):
+    Custom chiptune music engine synthesized via Web Audio API:
+      * Melody Lead: Square wave oscillator traversing a classic upbeat 64-step
+        retro arcade progression.
+      * Bassline: Triangle wave oscillator delivering punchy low-frequency 8-bit funk.
+      * Percussion: Procedural white noise buffer for crisp snare hits, high-frequency
+        noise burst hi-hats, and exponentially pitched sine wave kick drums.
+      * Dynamic Lifecycle Integration:
+          Starts/resumes automatically when entering or resuming the runner game.
+          Pauses during handwriting tracing overlays, game pauses, game over, or
+          when the browser tab is hidden / backgrounded.
+      * User Controls: Dedicated header toggle button (`#bgmToggle`) alongside the
+        master SFX toggle (`#soundToggle`), with state stored in localStorage.
+- Malay Speech Synthesis (Web Speech API):
+    Provides spoken voice feedback in Bahasa Melayu for instructions and cheers.
+
+
+5. ACCESSIBILITY, PWA & OFFLINE RESILIENCE
+--------------------------------------------------------------------------------
+- Calm Mode & Reduced Motion:
+    Toggle for reducing animations, removing screen shake, and toning down colors
+    for sensory-sensitive or neurodivergent students.
+- High Contrast & Light/Dark Modes:
+    Customizable color schemes to enhance readability across various devices.
+- Keyboard & Touch Navigation:
+    Full keyboard support (Arrow keys, Space/W for jump, S/Down for slide) and
+    large on-screen touch buttons for mobile/tablet devices.
+- Progressive Web App:
+    Fully installable to desktop or mobile home screens with offline caching
+    via Service Worker and Cache API.
+================================================================================
