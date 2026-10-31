@@ -1,0 +1,792 @@
+================================================================================
+KATA//RUN | KIT DIGITAL — DOKUMENTASI LENGKAP SISTEM & APLIKASI
+EXHAUSTIVE TECHNICAL & FUNCTIONAL APPLICATION SPECIFICATION
+================================================================================
+Versi: Cloud Edition (31 Oktober 2026)
+Aplikasi: KATA//RUN — Dunia Larian Huruf & Kit Digital Latihan Tulisan Motor Halus
+Platform: Web / Progressive Web Application (PWA)
+Bahasa: Bahasa Melayu (UI & Pedagogi) / English (Teknikal & Rujukan)
+
+--------------------------------------------------------------------------------
+JADUAL KANDUNGAN
+--------------------------------------------------------------------------------
+1.  PENGENALAN & RINGKASAN EKSEKUTIF (EXECUTIVE OVERVIEW)
+2.  OBJEKTIF PEDAGOGI & KUMPULAN SASARAN (PEDAGOGICAL OBJECTIVES & TARGET AUDIENCE)
+3.  SENIBINA SISTEM & STRUKTUR FAIL REPOSITORI (SYSTEM ARCHITECTURE & REPO STRUCTURE)
+4.  MODUL APLIKASI & ALIRAN KERJA PENGGUNA (MODULE WORKFLOWS)
+    4.1 Modul 01: Persediaan (Senam Jari / Finger Warm-Up)
+    4.2 Modul 02: Belajar (Lihat & Ikut / Visual Cues: Pegang, Tulis, Bagus)
+    4.3 Modul 03: Main (Larian Huruf / The Letter Chase & Cabaran Menulis)
+    4.4 Modul 04: Ganjaran (Papan Bintang Saya / Star Rewards & Dial)
+    4.5 Panel Guru (Papan Pemantauan Guru / Teacher Dashboard)
+5.  ENJIN PERMAINAN 2.5D "LARIAN HURUF" (THE LETTER CHASE GAME ENGINE)
+    5.1 Unjuran Perspektif 2.5D & Rendering Canvas
+    5.2 Kawalan & Input (Sentuhan, Tetikus, Stylus, Papan Kekunci)
+    5.3 Mekanik Permainan (Lorong, Halangan, Kuasa Tambahan, Fizik)
+    5.4 Misi Menulis & Kanvas Surihan (Tracing / Handwriting Modal)
+    5.5 Tema Dunia (World Themes) & Pilihan Avatar
+6.  STUDIO MEDIA KANDUNGAN & AUTO-FIT (MEDIA STUDIO & STORAGE)
+    6.1 Tujuh (7) Slot Media Boleh Ubah
+    6.2 Enjin Paparan Auto-Fit (Aspect-Ratio Preservation)
+    6.3 Sandaran Tempatan IndexedDB (Local Fallback)
+    6.4 Migrasi Media Tempatan ke Cloud
+7.  INTEGRASI AWAN SUPABASE & KESELAMATAN (SUPABASE CLOUD & SECURITY)
+    7.1 Skema Pangkalan Data (Database Schema)
+    7.2 Bucket Storan (Storage Bucket katarun-media)
+    7.3 Keselamatan & Polisi RLS (Row-Level Security & Teacher Allowlist)
+    7.4 Penyegerakan Automatik (30s Polling & Realtime)
+    7.5 Garis Panduan Privasi Murid & Had Keselamatan
+8.  SINTESIS AUDIO & ENJIN MUZIK WEB AUDIO (SOUND & MUSIC SYNTHESIZER)
+    8.1 Sintesis Bunyi Prosedural (Tone, Chime, Fanfare)
+    8.2 Enjin BGM Arked 8-Bit (ArcadeBGM Scheduler, Lead, Bass, Percussion)
+    8.3 Sintesis Pertuturan (Web Speech Synthesis API)
+9.  KEBOLEHAKSESAN, MOD KETENANGAN & KESELAMATAN UI (ACCESSIBILITY & CALM MODE)
+    9.1 Mod Ketenangan (Calm Mode)
+    9.2 Mod Pengurangan Gerakan (Reduced Motion)
+    9.3 Kebolehcapaian ARIA, Kontras Tinggi & Skrin Sentuh
+10. SKEMA PENYIMPANAN DATA & STRUKTUR PERSISTENS (DATA SCHEMAS)
+    10.1 Kunci & Struktur LocalStorage
+    10.2 Skema IndexedDB
+    10.3 Struktur Rekod Sesi Guru & Eksport CSV
+11. PROGRESSIVE WEB APP (PWA) & SOKONGAN LUAR TALIAN (OFFLINE STRATEGY)
+    11.1 Service Worker & Strategi Cache
+    11.2 Web App Manifest
+12. PANDUAN KONFIGURASI, PENGGELARAN & TROUBLESHOOTING (OPERATIONS & FAQ)
+================================================================================
+
+
+================================================================================
+1. PENGENALAN & RINGKASAN EKSEKUTIF (EXECUTIVE OVERVIEW)
+================================================================================
+KATA//RUN (juga dirujuk sebagai Kit Digital KATA//RUN atau varian teras i-Write)
+ialah sebuah aplikasi web progresif (PWA) berciri gamifikasi interaktif yang
+direka khas untuk membantu murid sekolah rendah di Malaysia menguasai kemahiran
+motor halus dan memupuk pegangan pensel tripod dinamik (dynamic tripod grasp)
+semasa menulis huruf kecil Bahasa Melayu.
+
+Aplikasi ini menggabungkan:
+1. Rutin senaman pemanasan motor halus interaktif (kinestetik & visual).
+2. Kad panduan visual dan petunjuk kedudukan tiga jari (multimodal cues).
+3. Permainan arked larian tanpa henti 3 lorong (3-lane endless runner) bertema
+   huruf Melayu 2.5D yang dipacu sepenuhnya oleh JavaScript kanvas natif tanpa
+   sebarang enjin permainan pihak ketiga.
+4. Kanvas surihan tulisan tangan interaktif berasaskan sentuhan atau stylus digital.
+5. Papan ganjaran 10 bintang motivasi dengan dial peratusan visual.
+6. Papan pemantauan dan studio guru menyeluruh untuk merekod tingkah laku motor,
+   mengira kekerapan kesilapan pegangan pensel, mengukur tempoh pengekalan
+   pegangan secara tepat, serta mengeksport laporan ke format CSV.
+7. Penyegerakan awan melalui Supabase Cloud Edition, membolehkan guru memuat naik
+   video demonstrasi dan gambar panduan ke storan awan yang disegerakkan secara
+   automatik merentasi semua peranti murid di kelas atau di rumah.
+
+
+================================================================================
+2. OBJEKTIF PEDAGOGI & KUMPULAN SASARAN
+================================================================================
+2.1 Kumpulan Sasaran:
+- Murid Tahap 1 Sekolah Rendah di Malaysia (Tahun 1, 2, dan 3).
+- Murid Program Pendidikan Khas Integrasi (PPKI) dan murid yang menghadapi
+  cabaran integrasi motor halus, disgrafia ringan, atau kelemahan koordinasi
+  mata-tangan.
+- Guru Bahasa Melayu, Guru Pemulihan Khas, Guru Prasekolah, Guru Pendidikan Khas,
+  dan Terapis Cara Kerja (Occupational Therapists).
+
+2.2 Cabaran Pedagogi yang Dihadapi:
+- Ramai murid memulakan tulisan dengan pegangan genggam palmar (palmar grasp)
+  atau pegangan jari empat yang kaku, menyebabkan keletihan tangan yang cepat,
+  ketidakstabilan baris, dan penolakan aktiviti menulis (writing avoidance).
+- Latihan tulisan konvensional (drill-and-practice) sering membosankan murid,
+  meningkatkan kerisauan dan menurunkan motivasi intrinsik.
+
+2.3 Pendekatan Pedagogi KATA//RUN:
+- Aliran 4 Langkah Berstruktur (Prep -> Learn -> Play/Practice -> Reward):
+  1) Persediaan (Prep): Mengaktifkan otot fleksor dan kestabilan sendi tangan.
+  2) Belajar (Learn): Membina gambaran mental tentang pegangan tiga jari.
+  3) Main (Play/Practice): Mengaitkan latihan menulis dengan ganjaran permainan
+     berkelajuan terkawal, di mana setiap perkataan yang dieja memerlukan
+     tulisan tangan sebenar di kanvas surihan.
+  4) Ganjaran (Reward): Memberi peneguhan positif segera (immediate reinforcement)
+     berdasarkan usaha dan pengekalan pegangan, bukan semata-mata kepantasan.
+- Protokol Keselamatan Guru (Teacher-in-the-loop):
+  Aplikasi ini direka agar guru/terapis dapat mengesahkan kejayaan latihan
+  sebelum bintang atau rekod kejayaan disimpan. Sekiranya murid menukar tab
+  atau aplikasi berada di latar belakang (backgrounded), pemasa dihentikan serta-
+  merta agar masa latihan tanpa pengawasan tidak dianggap sebagai penguasaan.
+
+
+================================================================================
+3. SENIBINA SISTEM & STRUKTUR FAIL REPOSITORI
+================================================================================
+Aplikasi ini beroperasi berasaskan prinsip Zero-Build Dependency, Offline-First,
+dan Client-Side Architecture. Tiada Node.js build step (seperti Webpack, Vite,
+atau Rollup) diperlukan untuk menjalankan aplikasi.
+
+3.1 Struktur Fail:
+- `index.html`:
+  Fail induk aplikasi (1,498 baris kod, ~181 KB). Mengandungi keseluruhan
+  struktur semantik HTML5, gaya visual CSS tersuai (skema komik bertema aksi,
+  mod ketenangan, pembolehubah tema CSS), ikon SVG terbenam berkualiti tinggi,
+  dua enjin skrip JavaScript utama (Teras Aplikasi + Web Audio Synthesizer, dan
+  Enjin Permainan Kanvas Larian Huruf), serta pendaftaran Service Worker.
+- `supabase-config.js`:
+  Fail konfigurasi awan Supabase luaran. Menetapkan window.KATARUN_SUPABASE_CONFIG
+  dengan url (Project URL) dan publishableKey (kunci selamat awam pelayar).
+- `supabase-setup.sql`:
+  Skrip SQL untuk dijalankan di SQL Editor papan pemuka Supabase. Membina jadual
+  katarun_teachers, katarun_media, fungsi katarun_is_teacher(), bucket storan
+  katarun-media, serta dasar keselamatan paras baris (Row-Level Security - RLS).
+- `service-worker.js`:
+  Pekerja perkhidmatan PWA. Melaksanakan strategi caching Shell (pre-cache fail
+  teras) dan strategi hibrid: Stale-While-Revalidate/Network-First untuk fail
+  HTML & config, serta Cache-First untuk aset statik lain.
+- `manifest.webmanifest`:
+  Manifest aplikasi web W3C untuk pemasangan peranti sebagai aplikasi mandiri
+  (standalone), lengkap dengan ikon 192px dan 512px, warna latar #0a101d.
+- `icons/`:
+  Folder mengandungi icon-192.png dan icon-512.png untuk PWA.
+- `favicon.ico` & `favicon.svg`:
+  Ikon kegemaran pelayar.
+- `MULA_DI_SINI.txt`:
+  Panduan permulaan pantas Bahasa Melayu bagi pengguna & pentadbir.
+- `PANDUAN_KONFIGURASI.md`:
+  Dokumentasi terperinci konfigurasi Supabase, persediaan akaun guru, migrasi
+  IndexedDB lama, dan senarai semak penyelesaian masalah.
+
+
+================================================================================
+4. MODUL APLIKASI & ALIRAN KERJA PENGGUNA
+================================================================================
+Antara muka KATA//RUN disusun secara tab moden (Navigation Shell) dengan 4 modul
+utama murid, ditambah 1 panel kawalan guru yang boleh dibuka/ditutup.
+
+--------------------------------------------------------------------------------
+4.1 MODUL 01: PERSEDIAAN (WARM - JOM SENAM JARI!)
+--------------------------------------------------------------------------------
+Tujuan: Memanaskan otot intrinsik tangan, meningkatkan propriosepsi, dan
+mengurangkan ketegangan jari sebelum memegang alat tulis.
+
+Tiga (3) aktiviti interaktif:
+1. Meramas Plastisin (Squeeze Playdough):
+   Animasi SVG interaktif meramas gumpalan doh lembut. Arahan: "Ramas dan lepas".
+   Membina kekuatan otot fleksor jejari dan ibu jari.
+2. Menyepit Penyepit Baju (Pinch Clothespeg):
+   Animasi SVG membuka dan menutup penyepit baju kayu. Arahan: "Sepit dan lepas".
+   Melatih oposisi ibu jari dan jari telunjuk (kekuatan pinch grip).
+3. Spider-Finger Walk (Jari Berjalan):
+   Animasi 4 jari melangkah di atas permukaan meja. Arahan: "Gerak satu demi satu".
+   Meningkatkan disosiasi jari dan ketangkasan koordinasi motor halus.
+
+Ciri-ciri Modul 01:
+- Pemasa Persediaan Berpandu: Boleh dimulakan (MULA), dijeda (JEDA), seterusnya
+  (SETERUSNYA), atau diset semula (SET SEMULA).
+- Panduan Audio: Butang arahan membunyikan arahan suara atau nada sintesis.
+- Pengekalan Status: Selepas selesai modul ini, murid menekan butang "Terus ke
+  Modul 02: Lihat & Ikut".
+
+--------------------------------------------------------------------------------
+4.2 MODUL 02: BELAJAR (CUE - LIHAT & IKUT)
+--------------------------------------------------------------------------------
+Tujuan: Memperkenalkan dan mengukuhkan gambaran mental tentang postur pegangan
+pensel tripod dinamik (dynamic tripod grasp) melalui isyarat visual berperingkat.
+
+Tiga (3) Kad Isyarat Visual:
+1. Kad 1: PEGANG (Grip)
+   - Ilustrasi SVG perincian tiga jari (ibu jari, telunjuk, dan sokongan jari
+     tengah) melingkari badan pensel pada jarak yang betul dari mata pensel.
+   - Arahan: "Pegang dengan tiga jari."
+2. Kad 2: TULIS (Write)
+   - Ilustrasi pensel condong ~45-60 darjah menulis di atas garisan buku latihan,
+     menunjukkan pergelangan tangan disokong di atas meja.
+   - Arahan: "Hujung pensel rapat garisan."
+3. Kad 3: BAGUS! (Praise)
+   - Ilustrasi bintang kejayaan dan jempol galakan guru.
+   - Arahan: "Sentiasa periksa kedudukan jari anda!"
+
+Ciri-ciri Modul 02:
+- Pilihan Kad Interaktif: Murid boleh menekan mana-mana kad untuk mendengar sebutan
+  pertuturan suara (Speech Synthesis) dan melihat petunjuk diperbesarkan.
+- Butang Ulangi Arahan: Murid boleh mendengar audio berulang kali.
+- Butang "Mula Menulis Sekarang": Membawa murid terus ke Modul 03 (Larian Huruf).
+
+--------------------------------------------------------------------------------
+4.3 MODUL 03: MAIN (WRITE - LARIAN HURUF & CABARAN MENULIS)
+--------------------------------------------------------------------------------
+Tujuan: Menggabungkan keseronokan permainan larian tanpa henti 3 lorong dengan
+amalan menulis huruf kecil secara tulisan tangan (handwriting tracing).
+
+Komponen Antara Muka Modul 03:
+- Papan Skor HUD: Memaparkan Skor semasa, Skor Tertinggi (Best), Syiling terkumpul,
+  dan Baki Hayat (3 ikon hati/nyawa).
+- Pemasa Sasaran Latihan: Memaparkan baki masa latihan (pilihan piawai: 30 saat,
+  60 saat, 120 saat, atau tempoh tersuai 15-480 saat).
+- Petunjuk Perkataan Sasaran: Memaparkan perkataan aktif yang perlu dieja (contoh:
+  J-A-R-I) dan huruf aktif seterusnya yang mesti dicari dalam lorong larian.
+- Jalur Makluman Pantas (Toast Notifications): Memaparkan kombo syiling, kuasa
+  tambahan, dan huruf yang berjaya dikumpul.
+- Kanvas Permainan Kanvas 2.5D: Memaparkan pelari aksi, lorong, bangunan metropolis,
+  dan objek halangan secara langsung.
+- Butang Sentuh Atas Skrin (On-Screen Touch Controls):
+  Butang kiri, lompat, gelongsor, dan kanan untuk memudahkan murid yang
+  menggunakan tablet atau skrin sentuh.
+
+--------------------------------------------------------------------------------
+4.4 MODUL 04: GANJARAN (REWARD - PAPAN BINTANG SAYA)
+--------------------------------------------------------------------------------
+Tujuan: Memberikan maklum balas peneguhan positif kepada murid untuk meraikan
+daya usaha dan ketabahan mereka.
+
+Ciri-ciri Utama:
+- Grid 10 Bintang: Mengandungi 10 slot bintang interaktif. Bintang yang diperoleh
+  berkilau dengan animasi emas terang.
+- Dial Kemajuan Pekeliling (Circular SVG Progress Dial):
+  Memaparkan peratusan kejayaan dari 0% hingga 100% (setiap bintang bernilai 10%).
+- Peneguhan Audio Fanfare: Apabila bintang baharu ditambah atau 10 bintang
+  lengkap, bunyi tiupan fanfare sintesis retro arcade dibunyikan.
+- Kategori Ganjaran Guru: Bintang boleh dianugerahkan secara automatik melalui
+  pengesahan tamat pemasa latihan, atau secara manual oleh guru melalui butang
+  "Beri Bintang Usaha" di Panel Guru.
+
+--------------------------------------------------------------------------------
+4.5 PANEL GURU (PAPAN PEMANTAUAN GURU - TEACHER DASHBOARD)
+--------------------------------------------------------------------------------
+Tujuan: Instrumen pengumpulan data klinikal & pemerhatian tingkah laku motor halus
+semasa murid menjalankan aktiviti.
+
+Fungsi Panel Guru:
+1. Tetapan Pembelajaran & Kebolehcapaian:
+   - Pengenalan Murid: Medan teks untuk ID atau Nama Murid (disimpan ke rekod).
+   - Sasaran Tempoh Sesi: Pilihan piawai (30s, 60s, 120s) atau input tersuai
+     antara 15 hingga 480 saat.
+   - Suara Panduan (Speech Toggle): Menghidupkan atau mematikan Web Speech API.
+   - Mod Manual (Manual Mode): Membenarkan mod larian dikawal secara santai.
+   - Kurang Gerakan (Motion Toggle): Mematikan animasi pantas untuk murid yang
+     mudah terganggu deria (sensory overload).
+2. Kaunter Pemerhatian Pegangan Tripod (Tripod Breakdown Counters):
+   Enam kaunter dengan butang tambah/tolak (+ / −):
+   a) Pegangan terlepas (Grip loss)
+   b) Berubah kepada genggam palmar (Palmar reversion)
+   c) Pensel terjatuh (Pencil drops)
+   d) Bantuan/arahan lisan guru (Teacher prompts)
+   e) Ragu-ragu / "Ye ke?" (Hesitation / uncertainty)
+   f) Murid merujuk kad visual (Visual cue usage)
+3. Borang Pengesahan Sesi:
+   - Tarikh Sesi (lalai kepada tarikh hari ini).
+   - Tempoh Pegangan Sebenar (Observed Seconds) antara 0 hingga 3600 saat.
+   - Status Pengesahan: "Ya (Dikekalkan)", "Belum", atau "Belum disahkan".
+   - Nota Tambahan Sesi (sehingga 1,500 aksara).
+   - Butang "Simpan Rekod": Menyimpan ke storan pelayar tempatan.
+4. Graf Perkembangan Pegangan Tripod (SVG Real-Time Chart):
+   - Memaparkan graf visual garisan 8 sesi pemerhatian terkini murid.
+   - Garis rujukan dasar (Baseline: 60 saat) dan garis sasaran optimum (480 saat).
+5. Sejarah Rekod Terkini & Eksport CSV:
+   - Jadual memaparkan tarikh, sasaran, tempoh sebenar, status, dan kekerapan ragu.
+   - Butang "Eksport CSV": Menghasilkan fail laporan spreadsheet CSV
+     lengkap dengan BOM UTF-8 dan perlindungan CSV formula injection.
+6. Studio Kandungan & Maskot (Media Studio & Supabase Sync):
+   - Log masuk guru ke akaun Supabase.
+   - Pemantau status Cloud Sync.
+   - Butang muat naik dan padam bagi setiap satu daripada 7 slot media.
+
+
+================================================================================
+5. ENJIN PERMAINAN 2.5D "LARIAN HURUF" (THE LETTER CHASE ENGINE)
+================================================================================
+Permainan Larian Huruf dibina daripada sifar menggunakan HTML5 Kanvas 2D API
+tanpa sebarang kebergantungan kepada Phaser, Pixi.js, Three.js, atau pustaka luaran.
+
+--------------------------------------------------------------------------------
+5.1 UNJURAN PERSPEKTIF 2.5D & RENDERING KANVAS
+--------------------------------------------------------------------------------
+- Koordinat Horizon:
+  Horizon ditetapkan pada paras H * 0.352 dari bahagian atas kanvas.
+- Fungsi Unjuran project(z, lane):
+  - z ialah jarak kedalaman relatif: z = 1.0 (titik kemunculan di horizon),
+    dan z = 0.0 (garisan hadapan pelari).
+  - Skala perspektif: scale = Math.pow(1 - z, 1.9).
+  - Kedudukan Y: y = horizon + (H - horizon) * scale.
+  - Lebar lorong dikira mengikut tirusan perspektif dari horizon ke bahagian
+    bawah skrin (tiga lorong bernombor 0, 1, dan 2).
+- Lapisan Latar Belakang Parallaks (Parallax World Scene):
+  1) Gradien langit berasaskan tema dunia aktif.
+  2) Bintang/zarah terapung di angkasa atau kabus bandar.
+  3) Matahari besar bercahaya dan gegelung planet (bagi tema Cosmos) atau
+     awan berarak (bagi tema Sunset).
+  4) Bangunan pencakar langit di kaki langit (dua lapisan bangunan latar
+     dengan pergerakan parallaks berbeza kelajuan).
+  5) Rel neon tepi jalan, garisan pemisah lorong specular, dan sambungan logam
+     yang bergerak ke hadapan secara infiniti.
+
+--------------------------------------------------------------------------------
+5.2 KAWALAN & INPUT
+--------------------------------------------------------------------------------
+Sistem kawalan direka amat responsif dan menyokong kepelbagaian peranti:
+- Papan Kekunci Komputer:
+  - Bergerak ke Kiri: Panah Kiri, A, atau a.
+  - Bergerak ke Kanan: Panah Kanan, D, atau d.
+  - Melompat: Panah Atas, W, w, atau Bar Ruang (Space).
+  - Menggelongsor: Panah Bawah, S, atau s.
+- Gerak Isyarat Leretan Sentuhan Kanvas (Swipe Gestures):
+  Menggunakan pointerdown dan pointerup. Algoritma mengukur beza dx dan dy.
+  Jika ketukan setempat (abs(dx) < 23 dan abs(dy) < 23), aksi lompat dicetuskan.
+  Jika leretan mendatar lebih dominan, pemain beralih lorong kiri/kanan. Jika
+  menegak, leretan ke atas melompat, ke bawah menggelongsor.
+- Butang Sentuhan UI Atas Skrin (On-Screen Action Buttons):
+  Butang besar khusus dengan atribut data-run-action="left", "jump",
+  "slide", dan "right" untuk penggunaan tablet bilik darjah.
+
+--------------------------------------------------------------------------------
+5.3 MEKANIK PERMAINAN, HALANGAN & BARANGAN
+--------------------------------------------------------------------------------
+- Kelajuan & Kesukaran:
+  Kelajuan asas ialah 0.38 dan meningkat secara beransur-ansur seiring masa larian
+  (speed = 0.38 + min(runTime / 200, 0.20)). Jika murid mengaktifkan Mod Ketenangan
+  atau Mod Kurang Gerakan, kelajuan dikurangkan sebanyak 27% (slow * 0.73).
+- Tiga Jenis Halangan (Obstacles):
+  1) Kotak Kayu / Halangan Rendah (crate):
+     Mesti dilompat melepasi (jump > 0.27). Berjaya melepasi memberi +70 mata.
+  2) Penghalang Tengah (barrier):
+     Mesti dielak dengan berpindah ke lorong lain.
+  3) Gerbang Rasuk Tinggi (arch):
+     Mesti digelongsor di bawahnya (slide > 0.15). Berjaya memberi +70 mata.
+- Barangan Boleh Kutip (Collectibles & Power-Ups):
+  1) Syiling Emas (coin):
+     Memberi +25 mata, +1 syiling, dan menambah rentetan kombo (streak).
+     Kombo gandaan 10 memaparkan makluman khas "10 SYILING BERTURUT!".
+  2) Huruf Perkataan Sasaran (letter):
+     Mengandungi huruf yang sepadan dengan perkataan semasa.
+     Hanya huruf yang tepat mengikut urutan dieja yang boleh dikutip.
+     Setiap kutipan huruf memberi +125 mata dan memainkan chime gembira.
+  3) Perisai Pelindung (shield):
+     Memberikan perlindungan selama 9 saat daripada 1 perlanggaran halangan.
+  4) Magnet Syiling (magnet):
+     Menyedut syiling secara automatik ke pelari selama 9 saat.
+- Sistem Nyawa & Perlanggaran:
+  Pemain bermula dengan 3 nyawa. Perlanggaran halangan tanpa perisai mengurangkan
+  1 nyawa, menggegarkan skrin (shake = 0.8), dan memberikan imuniti sementara
+  1.5 saat (invuln = 1.5). Kehilangan semua 3 nyawa menghentikan permainan
+  dengan skrin Game Over yang mesra murid.
+
+--------------------------------------------------------------------------------
+5.4 SENARAI PERKATAAN & KANVAS SURIHAN (HANDWRITING TRACING MODAL)
+--------------------------------------------------------------------------------
+Permainan menyertakan 8 perkataan Bahasa Melayu asas berkait tulisan:
+1. JARI
+2. PENA
+3. BUKU
+4. TULIS
+5. AYAT
+6. HURUF
+7. CERITA
+8. HEBAT
+
+Aliran Misi Menulis:
+1. Murid mengumpul huruf demi huruf di lorong permainan (contoh: J -> A -> R -> I).
+2. Setelah huruf terakhir dikutip, permainan larian dijeda secara automatik dan
+   kotak dialog Cabaran Menulis (traceOverlay) dibuka di tengah skrin.
+3. Kanvas surihan tulisan tangan (traceCanvas) diaktifkan dengan resolusi
+   DPI tinggi (pixelRatio = min(devicePixelRatio, 2)).
+4. Murid menulis perkataan tersebut menggunakan jari, tetikus, atau stylus digital.
+5. Garisan tulisan tangan direkod menggunakan pointerdown, pointermove, dan pointerup.
+6. Pengesahan Panjang Garisan (Ink Pixels):
+   Sistem mengira jarak kumulatif dakwat (inkPixels). Sekiranya murid menekan
+   butang "SIAP BERTULIS" dengan kurang daripada 35 piksel dakwat, sistem akan
+   memberi amaran lembut: "Sila cuba tulis dengan jari atau stylus dahulu."
+7. Ganjaran Misi:
+   Sekiranya berjaya disiapkan, murid menerima +500 mata bonus, +5 syiling,
+   bunyi tiupan fanfare kemasyhuran, dan kaunter perkataan bertambah. Permainan
+   kemudiannya beralih ke perkataan seterusnya. Murid juga dibenarkan melangkau
+   (Langkau) jika guru menghendakinya.
+
+--------------------------------------------------------------------------------
+5.5 TEMA DUNIA (WORLD THEMES) & AVATAR
+--------------------------------------------------------------------------------
+Tiga Tema Visual Menarik:
+1. Metro (Neon City — District 01):
+   Langit malam futuristik dengan gradien biru gelap, ungu dan jingga matahari
+   terbenam; bangunan metropolis moden bercahaya neon.
+2. Sunset (Sugar Rush — District 02):
+   Langit merah jambu ungu pastel dengan awan lembut dan cahaya hangat matahari.
+3. Cosmos (Star Port — District 03):
+   Stesen angkasa futuristik dengan langit gelap bertabur bintang firus (cyan),
+   gelang cincin planet gergasi, dan aurora kosmik bercahaya.
+
+Pilihan Karakter Avatar:
+- Lime: Pelari pantas bertenaga neon hijau cergas.
+- Coral: Pelari berani bertona jingga karang.
+- Violet: Pelari lincah bertona ungu futuristik.
+Pilihan tema dan avatar disimpan serta-merta ke LocalStorage (katarun-world-v2).
+
+
+================================================================================
+6. STUDIO MEDIA KANDUNGAN & AUTO-FIT (MEDIA STUDIO & STORAGE)
+================================================================================
+KATA//RUN membolehkan guru menggantikan ilustrasi SVG standard aplikasi dengan
+video demonstrasi atau gambar sebenar mereka sendiri.
+
+--------------------------------------------------------------------------------
+6.1 TUJUH (7) SLOT MEDIA BOLEH UBAH
+--------------------------------------------------------------------------------
+1. mascot: Maskot Penjelajah Huruf (Imej/video utama di bahagian atas aplikasi).
+2. exercise-0: Senaman 1 · Plastisin (Contoh meramas plastisin sebenar).
+3. exercise-1: Senaman 2 · Penyepit (Contoh menyepit penyepit baju sebenar).
+4. exercise-2: Senaman 3 · Spider Walk (Contoh pergerakan jari spider-walk).
+5. cue-0: Kad 1 · PEGANG (Gambar pegangan pensel tripod sebenar).
+6. cue-1: Kad 2 · TULIS (Video/gambar postur menulis pensel pada garisan).
+7. cue-2: Kad 3 · BAGUS (Gambar galakan atau ikon pensel berjaya).
+
+Format Fail Disokong:
+- Gambar: JPEG (.jpg, .jpeg), PNG (.png), WebP (.webp).
+- Video: MP4 (H.264 + AAC disyorkan untuk keserasian sejagat), WebM (.webm),
+  QuickTime MOV (.mov).
+- Had Saiz Fail: Maksimum 40 MB setiap fail (dikuatkuasakan oleh frontend dan
+  Storage Bucket Supabase).
+
+--------------------------------------------------------------------------------
+6.2 ENJIN PAPARAN AUTO-FIT
+--------------------------------------------------------------------------------
+Masalah Lazim Video Pendidikan:
+Video yang dirakam guru sering mempunyai nisbah aspek (aspect ratio) berbeza
+(seperti 9:16 menegak telefon pintar atau 16:9 mendatar). Jika dipaparkan secara
+biasa, bahagian penting seperti jari murid atau pensel sering terpotong (cropped).
+
+Penyelesaian Auto-Fit KATA//RUN:
+- Fungsi fitMediaToCard(stage, media):
+  Secara dinamik mengira nisbah aspek sebenar video/gambar berbanding bekas kad.
+  Elemen media dipaparkan dengan CSS object-fit: contain pada bekas tegar
+  berlatarbelakang kontras #101e37 untuk video dan latar lembut bagi kad.
+- Saling Eksklusif (Mutually Exclusive Rendering):
+  Apabila media tersuai dimuatkan pada slot, SVG asal disembunyikan (hidden = true)
+  dan elemen img atau video mengambil alih sepenuhnya. Apabila media
+  ditetapkan semula ke asal, SVG dipaparkan semula tanpa gangguan susun atur.
+
+--------------------------------------------------------------------------------
+6.3 SANDARAN TEMPATAN INDEXEDDB (LOCAL FALLBACK)
+--------------------------------------------------------------------------------
+- Sekiranya aplikasi dibuka tanpa konfigurasi Supabase (atau di luar talian),
+  sistem storan beralih secara anggun (graceful fallback) ke IndexedDB pelayar
+  tempatan:
+  - Nama Pangkalan Data: iwrite-hero-media-v1
+  - Object Store: media (kunci primer: slot)
+  - Menyimpan fail binari Blob sebenar secara selamat di dalam peranti.
+
+--------------------------------------------------------------------------------
+6.4 MIGRASI MEDIA TEMPATAN KE CLOUD
+--------------------------------------------------------------------------------
+- Guru yang menaik taraf daripada versi luar talian lama boleh menggunakan butang
+  "Pindahkan media lama" (Migrate Old Media).
+- Sistem akan mengimbas rekod lama dalam IndexedDB, memuat naik setiap Blob
+  ke Supabase Storage, memasukkan rekod ke jadual katarun_media, dan
+  mengesahkan pemindahan tanpa memadam salinan sandaran asal.
+
+
+================================================================================
+7. INTEGRASI AWAN SUPABASE & KESELAMATAN (SUPABASE CLOUD & SECURITY)
+================================================================================
+KATA//RUN Cloud Edition menggunakan Supabase JS SDK v2 untuk menyelaraskan
+media pembelajaran merentasi seluruh bilik darjah.
+
+--------------------------------------------------------------------------------
+7.1 SKEMA PANGKALAN DATA (DATABASE SCHEMA)
+--------------------------------------------------------------------------------
+1. Jadual public.katarun_teachers:
+   Senarai putih (allowlist) UUID pengguna yang disahkan sebagai guru:
+   - user_id uuid primary key references auth.users(id) on delete cascade
+   - added_at timestamptz not null default now()
+   - RLS diaktifkan; akses awam dan pengguna biasa dibatalkan (revoke all).
+
+2. Fungsi Keselamatan public.katarun_is_teacher():
+   Fungsi SQL berstatus security definer untuk menyemak adakah auth.uid()
+   semasa wujud di dalam jadual katarun_teachers:
+   create or replace function public.katarun_is_teacher()
+   returns boolean language sql stable security definer set search_path = ''
+   as $$ select exists(select 1 from public.katarun_teachers t where t.user_id = (select auth.uid())); $$;
+
+3. Jadual public.katarun_media:
+   Penyimpan metadata media aktif bagi setiap slot:
+   - slot text primary key check (slot in ('mascot','exercise-0','exercise-1','exercise-2','cue-0','cue-1','cue-2'))
+   - object_path text not null check (object_path ~ '^media/(mascot|exercise-[012]|cue-[012])/[a-zA-Z0-9-]+\.(jpg|png|webp|mp4|webm|mov)$')
+   - file_name text not null check (length(file_name) between 1 and 180)
+   - mime_type text not null check (mime_type in ('image/jpeg','image/png','image/webp','video/mp4','video/webm','video/quicktime'))
+   - updated_at timestamptz not null default now()
+
+--------------------------------------------------------------------------------
+7.2 BUCKET STORAN (katarun-media)
+--------------------------------------------------------------------------------
+- Nama Bucket: katarun-media
+- Akses: Awam (Public-Read)
+- Had Saiz Fail: 41,943,040 bait (40 MB)
+- Jenis MIME Dibenarkan: image/jpeg, image/png, image/webp, video/mp4,
+  video/webm, video/quicktime.
+
+--------------------------------------------------------------------------------
+7.3 DASAR KESELAMATAN (ROW-LEVEL SECURITY POLICIES)
+--------------------------------------------------------------------------------
+Prinsip Asas Keselamatan:
+- Pembacaan Awam (Public Read): Murid dan peranti bilik darjah membuka aplikasi
+  tanpa log masuk. Mereka mempunyai hak SELECT terhadap katarun_media dan fail
+  storan.
+- Hak Cipta & Ubah Eksklusif Guru (Teacher-Only Mutation):
+  Dasar INSERT, UPDATE, dan DELETE pada jadual katarun_media serta objek
+  storan storage.objects hanya dibenarkan jika public.katarun_is_teacher()
+  mengembalikan nilai TRUE. Pengguna berniat jahat atau murid tidak boleh
+  menimpa atau memadam media walaupun memiliki publishable key.
+
+--------------------------------------------------------------------------------
+7.4 PENYEGERAKAN AUTOMATIK (SYNC ENGINE)
+--------------------------------------------------------------------------------
+- Polling 30 Saat:
+  Setiap 30 saat, aplikasi secara automatik menyemak rekod katarun_media terkini.
+- Segerak Semula Tab Aktif:
+  Apabila tab pelayar dibuka semula dari latar belakang (visibilitychange),
+  aplikasi serta-merta memeriksa jika ada media baharu yang dikemas kini.
+- Sokongan Supabase Realtime (Pilihan):
+  Jika jadual katarun_media ditambah ke penerbitan supabase_realtime,
+  perubahan yang dimuat naik guru akan dipaparkan serta-merta pada skrin murid.
+
+--------------------------------------------------------------------------------
+7.5 GARIS PANDUAN PRIVASI MURID & HAD KESELAMATAN
+--------------------------------------------------------------------------------
+- Bucket Awam: Kerana bucket storan bersifat public-read, mana-mana individu yang
+  mengetahui pautan URL boleh melihat video tersebut.
+- PERATURAN PRIVASI MUTLAK:
+  Guru dilarang sama sekali memuat naik rakaman yang memaparkan wajah murid, suara
+  murid, tanda nama sekolah peribadi, atau sebarang data peribadi murid ke cloud.
+  Hanya video demonstrasi tangan guru atau grafik pengajaran dibenarkan.
+- Data Rekod Murid Kekal Setempat:
+  Data pemerhatian klinikal murid, nama murid, kiraan kesilapan, dan bintang
+  TIDAK PERNAH dimuat naik ke Supabase. Rekod ini disimpan 100% secara setempat di
+  dalam pelayar guru dan hanya dipindahkan melalui fail eksport CSV fizikal.
+
+
+================================================================================
+8. SINTESIS AUDIO & ENJIN MUZIK WEB AUDIO
+================================================================================
+KATA//RUN mengandungi pensintesis audio perisian penuh (Full Software Synthesizer)
+berasaskan W3C Web Audio API natif. Aplikasi ini tidak memerlukan sebarang fail
+audio luaran (.mp3 atau .wav), menjadikannya sangat pantas dan boleh
+beroperasi 100% di luar talian tanpa isu muat turun fail media.
+
+--------------------------------------------------------------------------------
+8.1 PENSINTESIS KESAN BUNYI PROSEDURAL
+--------------------------------------------------------------------------------
+1. tone(frequency, targetFreq, duration, gainValue):
+   Menjana gelombang sinus/segi empat dengan modulasi frekuensi eksponen untuk
+   bunyi bip butang, lompatan, kutipan syiling, dan pelanggaran.
+2. chime():
+   Memainkan arpeggio nada gembira pantas (C6, E6, G6) dengan peluruhan eksponen
+   yang lancar apabila murid mengutip huruf perkataan atau mengaktifkan kuasa perisai.
+3. fanfare():
+   Memainkan akord kemenangan penuh (C5, G5, C6) yang gemilang untuk meraikan
+   kejayaan murid menyiapkan surihan perkataan atau melengkapkan 10 bintang.
+
+--------------------------------------------------------------------------------
+8.2 ENJIN BGM ARKED 8-BIT (ArcadeBGM)
+--------------------------------------------------------------------------------
+Sebuah enjin muzik chiptune 3 saluran yang berjalan pada 128 BPM (16 langkah per
+bar, corak gelung 64 langkah / 4 bar):
+
+1. Saluran Melodi Utama (Lead Channel):
+   - Menggunakan pengayun gelombang segi empat (square wave) retro arked.
+   - Memainkan melodi bertenaga dalam nada C Major dan A Minor dengan hiasan
+     arpeggio arked klasik.
+2. Saluran Bes (Bass Channel):
+   - Menggunakan pengayun gelombang segi tiga (triangle wave) dalam julat
+     frekuensi rendah (C2 hingga E3).
+   - Menghasilkan rentak bassline berjalan (walking bass) yang dinamik.
+3. Saluran Perkusi Arked (8-Bit Drum Channel):
+   - Tendangan Bes (Kick Drum, drum = 1): Gelombang segi tiga dengan penurunan
+     pic pantas dari 140 Hz ke 32 Hz dalam 80 milisaat.
+   - Jerat (Snare Drum, drum = 2): Letusan bunyi hingar putih (white noise
+     buffer) yang ditapis melalui penapis laluan tinggi (high-pass filter pada 1,200 Hz).
+   - Simbal Topi (Hi-Hat, drum = 3): Detikan hingar putih amat pendek dengan
+     penapis laluan tinggi 6,000 Hz.
+- Penjadual Tepat Web Audio (scheduler()):
+  Menjadualkan not 120 milisaat lebih awal daripada masa semasa bagi memastikan
+  muzik tidak terputus atau tersangkut walaupun CPU sedang sibuk merender kanvas.
+- Kawalan Bebas: Muzik BGM boleh dihidupkan/dimatikan secara berasingan daripada
+  kesan bunyi (SFX) melalui butang atas bgmToggle dan soundToggle.
+
+--------------------------------------------------------------------------------
+8.3 SINTESIS PERTURURAN (WEB SPEECH SYNTHESIS API)
+--------------------------------------------------------------------------------
+- Fungsi speak(text):
+  Menggunakan window.speechSynthesis dengan pengecaman bahasa Melayu (ms-MY,
+  ms, id-ID).
+- Digunakan untuk menyebut arahan visual "Pegang dengan tiga jari", "Hujung
+  pensel rapat garisan", dan kata-kata perangsang "Saya boleh cuba!".
+
+
+================================================================================
+9. KEBOLEHAKSESAN, MOD KETENANGAN & KESELAMATAN UI
+================================================================================
+KATA//RUN dibina dengan mengambil kira garis panduan kebolehcapaian WCAG 2.1 AA
+dan keperluan khas murid berkeperluan pendidikan khas (MBPK).
+
+9.1 Mod Ketenangan (Calm Mode):
+- Menggantikan gradien bersemangat dan warna tepu terang dengan skema warna lembut
+  dan pastel yang menenangkan.
+- Mematikan animasi berkilau latar belakang, membuang unsur visual yang berlebihan,
+  dan mengurangkan gangguan sensori bagi murid dengan autisme atau ADHD.
+
+9.2 Mod Pengurangan Gerakan (Reduced Motion):
+- Menghormati tetapan sistem operasi (prefers-reduced-motion: reduce) serta
+  boleh dihidupkan secara manual oleh guru melalui motionToggle.
+- Melumpuhkan kesan gegaran skrin kanvas (shake = 0), menghentikan peralihan
+  animasi CSS yang pantas, dan memperlahankan rentak larian watak.
+
+9.3 Aksesibiliti Sentuhan & Pembaca Skrin:
+- Semua butang interaktif mempunyai sasaran sentuh minimum 48x48 piksel.
+- Label ARIA yang komprehensif (aria-label, aria-pressed, aria-current,
+  aria-live="polite" untuk jalur makluman).
+- Teks tersembunyi skrin (.sr-only) untuk pembaca skrin.
+- Navigasi papan kekunci penuh dengan cincin fokus jelas (outline: 4px solid #f8b93c).
+
+
+================================================================================
+10. SKEMA PENYIMPANAN DATA & STRUKTUR PERSISTENS
+================================================================================
+Aplikasi menggunakan gabungan tiga teknologi storan pada peranti:
+
+--------------------------------------------------------------------------------
+10.1 STRUKTUR LOCALSTORAGE
+--------------------------------------------------------------------------------
+1. iwrite-pro-v1:
+   Objek JSON konfigurasi utama aplikasi:
+   {
+     "version": 1,
+     "stars": 0,                   // Bilangan bintang aktif (0 hingga 10)
+     "starReason": "effort",         // Alasan ganjaran
+     "sound": true,                // Status kesan bunyi
+     "bgm": true,                  // Status muzik latar
+     "speech": true,               // Status suara pertuturan
+     "calm": false,                // Mod ketenangan (aktif / tidak)
+     "light": false,               // Mod tema terang
+     "reduced": false,             // Mod pengurangan gerakan
+     "manual": false,              // Mod kawalan manual
+     "student": "Murid A",         // ID / Nama murid semasa
+     "records": [ ... ],           // Senarai rekod pemerhatian klinikal (maks 500)
+     "page": "warm",               // Modul aktif semasa
+     "selectedSeconds": 120        // Tempoh masa latihan sasaran
+   }
+
+2. iwrite-larian-huruf-v1:
+   Objek JSON statistik permainan larian murid:
+   {
+     "best": 18450,                // Skor terbaik tertinggi
+     "totalCoins": 240,            // Jumlah keseluruhan syiling
+     "words": 18                   // Bilangan perkataan berjaya ditulis
+   }
+
+3. katarun-world-v2:
+   Objek JSON pilihan tema dan avatar:
+   {
+     "world": "metro",             // 'metro' | 'sunset' | 'cosmos'
+     "avatar": "lime"              // 'lime' | 'coral' | 'violet'
+   }
+
+--------------------------------------------------------------------------------
+10.2 STRUKTUR REKOD SESI GURU & EKSPORT CSV
+--------------------------------------------------------------------------------
+Setiap sesi pemerhatian guru disimpan dalam tatasusunan state.records:
+{
+  "date": "2026-10-31",
+  "student": "Murid A",
+  "target": 120,                  // Sasaran masa dalam saat
+  "observed": 115,                // Masa pemerhatian sebenar dalam saat
+  "success": "ya",                // 'ya' | 'belum' | 'tidak_disahkan'
+  "counts": {
+    "loss": 1,                    // Pegangan terlepas
+    "palmar": 0,                  // Berubah kepada genggam palmar
+    "drops": 0,                   // Pensel terjatuh
+    "prompts": 2,                 // Bantuan/arahan guru
+    "hesitation": 1,              // Ragu-ragu
+    "visual": 1                   // Guna kad visual
+  },
+  "notes": "Murid menunjukkan kestabilan jari telunjuk yang lebih baik.",
+  "recordedAt": "2026-10-31T08:30:00.000Z"
+}
+
+Format Eksport CSV:
+- Pengekodan fail: text/csv;charset=utf-8 disertakan Byte Order Mark (BOM \ufeff)
+  supaya fail terbuka dengan paparan aksara yang sempurna dalam Microsoft Excel.
+- Sanitasi Formula Injection: Setiap medan teks yang bermula dengan aksara berbahaya
+  (=, +, -, @, \t, \r) diawali dengan tanda petik tunggal (') untuk menghalang
+  serangan CSV injection apabila dibuka oleh pihak pentadbir.
+
+
+================================================================================
+11. PROGRESSIVE WEB APP (PWA) & SOKONGAN LUAR TALIAN
+================================================================================
+KATA//RUN mematuhi piawaian PWA moden sepenuhnya dan boleh dipasang pada desktop
+(Windows, macOS, ChromeOS) mahupun peranti mudah alih (Android, iPadOS).
+
+11.1 Service Worker (service-worker.js):
+- Nama Cache: katarun-cloud-v1-20261031
+- Aset Shell Prapasang (Pre-Cached):
+  - ./
+  - ./index.html
+  - ./manifest.webmanifest
+  - ./favicon.svg
+  - ./favicon.ico
+  - ./icons/icon-192.png
+  - ./icons/icon-512.png
+- Strategi Permintaan Rangkaian:
+  - Permintaan ke fail index.html, supabase-config.js, dan root (./):
+    Menggunakan Network-First dengan kemas kini cache automatik di latar belakang,
+    diikuti sandaran Cache sekiranya peranti berada di luar talian.
+  - Aset lain: Cache-First dengan panggilan fetch sandaran.
+
+11.2 Web App Manifest (manifest.webmanifest):
+- Mod Paparan: standalone (membuang palang URL pelayar untuk pengalaman seperti
+  aplikasi natif).
+- Skema Orientasi & Warna: Warna tema #0a101d sepadan dengan reka bentuk arked.
+
+
+================================================================================
+12. PANDUAN KONFIGURASI, PENGGELARAN & TROUBLESHOOTING
+================================================================================
+12.1 Arahan Penggelaran Web (Deployment):
+1. Muat naik semua fail direktori akar ke pelayan web yang menyokong protokol HTTPS
+   (contoh: Netlify, Vercel, GitHub Pages, Cloudflare Pages).
+2. PWA dan Web Audio API memerlukan protokol selamat (HTTPS) atau localhost
+   untuk berfungsi sepenuhnya.
+
+12.2 Persediaan Supabase Cloud:
+1. Cipta projek di https://supabase.com.
+2. Buka SQL Editor dan tampal serta jalankan supabase-setup.sql.
+3. Buka Authentication > Users, cipta akaun guru (emel + kata laluan).
+4. Salin User UID guru dan daftarkannya ke katarun_teachers:
+   INSERT INTO public.katarun_teachers (user_id) VALUES ('UID_GURU_DI_SINI');
+5. Buka supabase-config.js dan gantikan URL projek serta Publishable Key.
+
+12.3 Jadual Troubleshooting:
+--------------------------------------------------------------------------------
+Gejala / Mesej Ralat           Punca & Langkah Penyelesaian
+--------------------------------------------------------------------------------
+"Cloud belum dikonfigurasi"    URL atau publishable key dalam supabase-config.js
+                               masih mengandungi nilai contoh / placeholder.
+                               Sila semak semula fail supabase-config.js.
+
+"Pustaka Supabase tidak        Sambungan Internet terputus atau CDN jsdelivr.net
+dimuatkan"                     disekat oleh firewall sekolah. Pastikan talian
+                               Internet aktif semasa memuatkan aplikasi.
+
+"permission denied / RLS"      UID guru belum didaftarkan dalam jadual
+                               katarun_teachers, atau guru belum log masuk di
+                               Studio Guru > Supabase Cloud Sync.
+
+Video tidak bergerak / gelap   Format codec video tidak serasi dengan pelayar.
+                               Gunakan codec video MP4 H.264 dengan audio AAC.
+                               Tekan butang 'MAIN VIDEO' jika sekatan autoplay pelayar
+                               menghalang video daripada berputar automatik.
+
+Tiada bunyi audio / muzik      Pelayar menyekat audio sebelum interaksi pengguna
+                               (Browser Autoplay Policy). Sentuh atau klik mana-mana
+                               bahagian skrin untuk mengaktifkan AudioContext.
+
+Aplikasi tidak dapat dipasang  Aplikasi mesti diakses melalui protokol HTTPS yang
+sebagai PWA                    sah dengan sijil SSL yang sah, bukan fail file://.
+================================================================================
+DOKUMENTASI INI MERUPAKAN RUJUKAN LENGKAP KESELURUHAN SISTEM KATA//RUN.
+TAMAT DOKUMEN.
+================================================================================
