@@ -10,6 +10,8 @@
 <meta name="theme-color" content="#0a101e">
 <meta name="description" content="KATA//RUN: pengembaraan larian huruf 3D bergaya, misi menulis dan pembelajaran motor halus Bahasa Melayu. Boleh dimainkan tanpa internet.">
 <title>KATA//RUN</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="alternate icon" href="favicon.ico">
 <meta name="description" content="KATA//RUN — Kit Digital Gamifikasi Pembelajaran dengan media pendidikan disegerakkan melalui Supabase.">
 <style>
 :root{--bg:#f8fafc;--ink:#193247;--muted:#52687a;--teal:#005b60;--navy:#1e3a8a;--mint:#ddf5ea;--sky:#e8f4ff;--lav:#f1edff;--cream:#fff5e6;--gold:#f4b942;--green:#10b981;--amber:#f59e0b;--coral:#ef4444;--line:#dce8ed;--white:#fff;--shadow:0 14px 42px rgba(26,63,85,.075);--r:25px}
@@ -463,7 +465,7 @@ body.light-mode .media-stage.media-adaptive{outline:2px solid #9abbd1}
 <header class="top"><div class="shell top-row"><div class="brand">
 <div class="brand-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M15 15h11v34H15z" fill="#0B1423"/><path d="M27 32 47 13h-13L21 26v13l16 12h15L27 32Z" fill="#0B1423"/><path d="M43 7h11M48 13h10M48 55h10" stroke="#0B1423" stroke-width="3" stroke-linecap="round"/></svg></div>
 <div class="brand-words"><div class="eyebrow">Bahan Bantu Belajar <span class="brand-dot">●</span> Cikgu Aieryl</div><h1>KATA<span class="brand-slash">//</span>RUN <span class="brand-edition">KIT DIGITAL</span></h1><p class="subtitle">Gamifikasi Pembelajaran</p></div></div>
-<div class="top-actions"><span class="pill" id="topStars"><i class="fa-solid fa-star"></i> 0/5</span><button class="mini-btn" id="themeToggle" aria-pressed="false"><i class="fa-regular fa-sun"></i><span>Light Mode</span></button><button class="mini-btn" id="soundToggle" aria-pressed="true"><i class="fa-solid fa-volume-high"></i><span>Bunyi</span></button><button class="mini-btn teacher-trigger" id="teacherToggle" aria-expanded="false" aria-controls="teacherPanel"><i class="fa-solid fa-sliders"></i><span>Studio Guru</span></button></div></div></header>
+<div class="top-actions"><span class="pill" id="topStars"><i class="fa-solid fa-star"></i> 0/5</span><button class="mini-btn" id="themeToggle" aria-pressed="false"><i class="fa-regular fa-sun"></i><span>Light Mode</span></button><button class="mini-btn" id="soundToggle" aria-pressed="true"><i class="fa-solid fa-volume-high"></i><span>Bunyi</span></button><button class="mini-btn" id="bgmToggle" aria-pressed="true" title="Muzik Latar 8-Bit Arcade"><i class="fa-solid fa-music"></i><span>BGM</span></button><button class="mini-btn teacher-trigger" id="teacherToggle" aria-expanded="false" aria-controls="teacherPanel"><i class="fa-solid fa-sliders"></i><span>Studio Guru</span></button></div></div></header>
 <main class="shell main">
 <div class="intro" id="homeHero">
 <div class="hero-copy"><div class="hero-topline"><span class="hero-serial">INOVASI DIGITAL</span><span class="hero-live"><span class="live-dot"></span> BERSEDIA UNTUK MISI</span></div>
@@ -565,9 +567,9 @@ body.light-mode .media-stage.media-adaptive{outline:2px solid #9abbd1}
 /* All resources are embedded: no frameworks, images, services, or network calls. */
 const $=id=>document.getElementById(id);
 const STORAGE='iwrite-pro-v1';
-const defaults=()=>({version:1,stars:0,starReason:'effort',sound:true,speech:true,calm:false,light:false,reduced:false,manual:false,student:'Murid A',records:[],page:'warm',selectedSeconds:120});
+const defaults=()=>({version:1,stars:0,starReason:'effort',sound:true,bgm:true,speech:true,calm:false,light:false,reduced:false,manual:false,student:'Murid A',records:[],page:'warm',selectedSeconds:120});
 const validRecord=r=>r&&typeof r==='object'&&typeof r.date==='string'&&Number.isFinite(r.target)&&r.target>0&&Number.isFinite(r.observed)&&r.observed>=0&&['ya','belum','tidak_disahkan'].includes(r.success)&&r.counts&&typeof r.counts==='object';
-function load(){let d=defaults();try{const raw=localStorage.getItem(STORAGE);if(!raw)return d;const v=JSON.parse(raw);if(!v||v.version!==1)return d;d.stars=Number.isInteger(v.stars)?Math.max(0,Math.min(5,v.stars)):0;d.starReason=v.starReason==='mastery'?'mastery':'effort';for(const key of ['sound','speech','calm','light','reduced','manual'])if(typeof v[key]==='boolean')d[key]=v[key];if(typeof v.student==='string')d.student=v.student.slice(0,50);if(Array.isArray(v.records))d.records=v.records.filter(validRecord).slice(-500);if(['warm','cue','write','reward'].includes(v.page))d.page=v.page;if(Number.isInteger(v.selectedSeconds)&&v.selectedSeconds>=15&&v.selectedSeconds<=480)d.selectedSeconds=v.selectedSeconds;}catch(e){}return d}
+function load(){let d=defaults();try{const raw=localStorage.getItem(STORAGE);if(!raw)return d;const v=JSON.parse(raw);if(!v||v.version!==1)return d;d.stars=Number.isInteger(v.stars)?Math.max(0,Math.min(5,v.stars)):0;d.starReason=v.starReason==='mastery'?'mastery':'effort';for(const key of ['sound','bgm','speech','calm','light','reduced','manual'])if(typeof v[key]==='boolean')d[key]=v[key];if(typeof v.student==='string')d.student=v.student.slice(0,50);if(Array.isArray(v.records))d.records=v.records.filter(validRecord).slice(-500);if(['warm','cue','write','reward'].includes(v.page))d.page=v.page;if(Number.isInteger(v.selectedSeconds)&&v.selectedSeconds>=15&&v.selectedSeconds<=480)d.selectedSeconds=v.selectedSeconds;}catch(e){}return d}
 let state=load();let saveWarned=false;
 function save(){try{localStorage.setItem(STORAGE,JSON.stringify(state));return true}catch(e){if(!saveWarned){saveWarned=true;notice('Storan tempatan tidak tersedia. Eksport CSV untuk menyimpan rekod.')}return false}}
 function notice(s){$('teacherNotice').textContent=s}
@@ -582,9 +584,215 @@ function chime(){tone(523);tone(659,.15);tone(784,.3,.22)}
 function fanfare(){[523,659,784,1046].forEach((n,i)=>tone(n,i*.16,.23,.04))}
 function speak(s){if(!state.sound||!state.speech)return false;if(!('speechSynthesis'in window)||!('SpeechSynthesisUtterance'in window))return false;try{speechSynthesis.cancel();const v=speechSynthesis.getVoices().find(x=>x.lang.toLowerCase().startsWith('ms'));if(!v)return false;const u=new SpeechSynthesisUtterance(s);u.voice=v;u.lang='ms-MY';u.rate=.86;u.volume=.6;speechSynthesis.speak(u);return true}catch(e){return false}}
 function promptAudio(s){if(!speak(s))tone(587,0,.16)}
-$('soundToggle').onclick=()=>{state.sound=!state.sound;if(!state.sound&&'speechSynthesis'in window)speechSynthesis.cancel();renderSettings();save();if(state.sound)tone(523)};
+/* 8-bit Arcade Chiptune Synthesizer Engine */
+const ArcadeBGM=(()=>{
+  let isPlaying=false,step=0,timerId=null,masterGain=null,noiseBuffer=null;
+  const bpm=134,stepDuration=60/(bpm*4); // 16th notes
+  // Note frequencies (Hz)
+  const N={
+    C2:65.41,E2:82.41,F2:87.31,G2:98.00,A2:110.0,B2:123.47,
+    C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196.00,A3:220.0,B3:246.94,
+    C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392.00,A4:440.0,B4:493.88,
+    C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880.0,B5:987.77,
+    C6:1046.5
+  };
+  // 64-step (4 bars of 4/4) authentic chiptune melody
+  const leadPattern=[
+    // Bar 1 (C maj / upbeat drive)
+    N.E5, 0, N.G5, 0, N.C6, 0, N.B5, N.A5, N.G5, 0, N.E5, 0, N.D5, N.E5, N.F5, N.D5,
+    // Bar 2 (A min / bouncy retro cadence)
+    N.C5, 0, N.E5, 0, N.A5, 0, N.G5, N.F5, N.E5, 0, N.G5, 0, N.F5, N.E5, N.D5, 0,
+    // Bar 3 (F maj to G maj turnaround)
+    N.F5, 0, N.A5, 0, N.C6, 0, N.A5, 0, N.G5, N.B5, N.D6, 0, N.B5, 0, N.G5, 0,
+    // Bar 4 (Resolving arcade flourish)
+    N.C6, 0, N.G5, 0, N.E5, N.G5, N.C6, 0, N.D6, N.B5, N.G5, N.B5, N.C6, 0, 0, 0
+  ];
+  // Triangle bassline (driving 8-bit walking bass)
+  const bassPattern=[
+    // Bar 1
+    N.C3, N.C3, N.G3, N.C3, N.C3, N.C3, N.G3, N.C3, N.C3, N.C3, N.G3, N.C3, N.G2, N.G2, N.B2, N.D3,
+    // Bar 2
+    N.A2, N.A2, N.E3, N.A2, N.A2, N.A2, N.E3, N.A2, N.F2, N.F2, N.C3, N.F2, N.G2, N.G2, N.D3, N.G2,
+    // Bar 3
+    N.F2, N.F2, N.C3, N.F2, N.F2, N.F2, N.C3, N.F2, N.G2, N.G2, N.D3, N.G2, N.G2, N.G2, N.D3, N.G2,
+    // Bar 4
+    N.C3, N.C3, N.G3, N.C3, N.E3, N.C3, N.G3, N.C3, N.G2, N.B2, N.D3, N.G3, N.C3, N.G2, N.C3, 0
+  ];
+  // 8-bit percussion: 0=none, 1=kick (frequency sweep), 2=snare (noise burst), 3=hi-hat (short noise)
+  const drumPattern=[
+    1, 0, 3, 0, 2, 0, 3, 0, 1, 0, 3, 1, 2, 0, 3, 0,
+    1, 0, 3, 0, 2, 0, 3, 0, 1, 0, 3, 1, 2, 0, 3, 3,
+    1, 0, 3, 0, 2, 0, 3, 0, 1, 0, 3, 1, 2, 0, 3, 0,
+    1, 0, 3, 1, 2, 0, 3, 1, 2, 3, 2, 3, 1, 1, 2, 0
+  ];
+
+  function getNoiseBuffer(ctx){
+    if(noiseBuffer)return noiseBuffer;
+    const bufferSize=ctx.sampleRate*0.15;
+    noiseBuffer=ctx.createBuffer(1,bufferSize,ctx.sampleRate);
+    const output=noiseBuffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++)output[i]=Math.random()*2-1;
+    return noiseBuffer;
+  }
+
+  function playStep(t){
+    const ctx=audioContext();
+    if(!ctx||!masterGain)return;
+    const cur=step%64;
+    const leadNote=leadPattern[cur];
+    const bassNote=bassPattern[cur];
+    const drum=drumPattern[cur];
+
+    // Lead Channel: retro 8-bit square wave
+    if(leadNote){
+      try{
+        const osc=ctx.createOscillator(),gain=ctx.createGain();
+        osc.type='square';
+        osc.frequency.setValueAtTime(leadNote,t);
+        gain.gain.setValueAtTime(0.0001,t);
+        gain.gain.exponentialRampToValueAtTime(0.024,t+0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001,t+stepDuration*0.82);
+        osc.connect(gain).connect(masterGain);
+        osc.start(t);
+        osc.stop(t+stepDuration*0.85);
+      }catch(e){}
+    }
+
+    // Bass Channel: retro triangle wave
+    if(bassNote){
+      try{
+        const bassOsc=ctx.createOscillator(),bassGain=ctx.createGain();
+        bassOsc.type='triangle';
+        bassOsc.frequency.setValueAtTime(bassNote,t);
+        bassGain.gain.setValueAtTime(0.0001,t);
+        bassGain.gain.exponentialRampToValueAtTime(0.038,t+0.008);
+        bassGain.gain.exponentialRampToValueAtTime(0.0001,t+stepDuration*0.9);
+        bassOsc.connect(bassGain).connect(masterGain);
+        bassOsc.start(t);
+        bassOsc.stop(t+stepDuration*0.92);
+      }catch(e){}
+    }
+
+    // Percussion Channel
+    if(drum===1){
+      // Chiptune Kick: downward pitch drop
+      try{
+        const kick=ctx.createOscillator(),kGain=ctx.createGain();
+        kick.type='triangle';
+        kick.frequency.setValueAtTime(140,t);
+        kick.frequency.exponentialRampToValueAtTime(32,t+0.08);
+        kGain.gain.setValueAtTime(0.045,t);
+        kGain.gain.exponentialRampToValueAtTime(0.0001,t+0.09);
+        kick.connect(kGain).connect(masterGain);
+        kick.start(t);
+        kick.stop(t+0.095);
+      }catch(e){}
+    }else if(drum===2){
+      // Chiptune Snare: white noise burst + tone
+      try{
+        const noise=ctx.createBufferSource(),nGain=ctx.createGain(),filter=ctx.createBiquadFilter();
+        noise.buffer=getNoiseBuffer(ctx);
+        filter.type='highpass';
+        filter.frequency.setValueAtTime(1200,t);
+        nGain.gain.setValueAtTime(0.025,t);
+        nGain.gain.exponentialRampToValueAtTime(0.0001,t+0.075);
+        noise.connect(filter).connect(nGain).connect(masterGain);
+        noise.start(t);
+        noise.stop(t+0.08);
+      }catch(e){}
+    }else if(drum===3){
+      // Chiptune Hi-hat: short noise tick
+      try{
+        const hat=ctx.createBufferSource(),hGain=ctx.createGain(),hFilter=ctx.createBiquadFilter();
+        hat.buffer=getNoiseBuffer(ctx);
+        hFilter.type='highpass';
+        hFilter.frequency.setValueAtTime(6000,t);
+        hGain.gain.setValueAtTime(0.012,t);
+        hGain.gain.exponentialRampToValueAtTime(0.0001,t+0.028);
+        hat.connect(hFilter).connect(hGain).connect(masterGain);
+        hat.start(t);
+        hat.stop(t+0.03);
+      }catch(e){}
+    }
+
+    step=(step+1)%64;
+  }
+
+  let nextStepTime=0;
+  function scheduler(){
+    if(!isPlaying)return;
+    const ctx=audioContext();
+    if(!ctx)return;
+    while(nextStepTime<ctx.currentTime+0.12){
+      playStep(nextStepTime);
+      nextStepTime+=stepDuration;
+    }
+    timerId=setTimeout(scheduler,30);
+  }
+
+  function start(){
+    if(!state.sound||!state.bgm)return;
+    const ctx=audioContext();
+    if(!ctx)return;
+    if(isPlaying)return;
+    isPlaying=true;
+    if(!masterGain){
+      masterGain=ctx.createGain();
+      masterGain.gain.value=0.75;
+      masterGain.connect(ctx.destination);
+    }
+    nextStepTime=ctx.currentTime+0.05;
+    scheduler();
+  }
+
+  function pause(){
+    isPlaying=false;
+    if(timerId){clearTimeout(timerId);timerId=null}
+  }
+
+  function updateMute(){
+    if(!state.sound||!state.bgm){
+      pause();
+    }else if(window.jomRunnerIsActive&&window.jomRunnerIsActive()){
+      start();
+    }
+  }
+
+  return {start,pause,updateMute,isPlaying:()=>isPlaying};
+})();
+
+$('soundToggle').onclick=()=>{
+  state.sound=!state.sound;
+  if(!state.sound&&'speechSynthesis'in window)speechSynthesis.cancel();
+  ArcadeBGM.updateMute();
+  renderSettings();
+  save();
+  if(state.sound)tone(523);
+};
+$('bgmToggle').onclick=()=>{
+  state.bgm=!state.bgm;
+  ArcadeBGM.updateMute();
+  renderSettings();
+  save();
+  if(state.bgm&&state.sound)tone(659);
+};
 $('themeToggle').onclick=()=>{state.light=!state.light;renderSettings();save()};
-function renderSettings(){$('soundToggle').innerHTML=(state.sound?'<i class="fa-solid fa-volume-high"></i>':'<i class="fa-solid fa-volume-xmark"></i>')+'<span>Bunyi</span>';$('soundToggle').setAttribute('aria-pressed',state.sound);$('themeToggle').innerHTML=(state.light?'<i class="fa-solid fa-moon"></i>':'<i class="fa-regular fa-sun"></i>')+'<span>Light Mode</span>';$('themeToggle').setAttribute('aria-pressed',state.light);$('speechToggle').textContent=state.speech?'Suara Melayu ON':'Suara Melayu OFF';$('speechToggle').setAttribute('aria-pressed',state.speech);$('manualToggle').textContent=state.manual?'Anugerah Manual ON':'Anugerah Manual OFF';$('manualToggle').setAttribute('aria-pressed',state.manual);$('motionToggle').textContent=state.reduced?'Kurangkan Animasi ON':'Kurangkan Animasi OFF';$('motionToggle').setAttribute('aria-pressed',state.reduced);$('studentId').value=state.student;applyModes()}
+function renderSettings(){
+  $('soundToggle').innerHTML=(state.sound?'<i class="fa-solid fa-volume-high"></i>':'<i class="fa-solid fa-volume-xmark"></i>')+'<span>Bunyi</span>';
+  $('soundToggle').setAttribute('aria-pressed',state.sound);
+  $('bgmToggle').innerHTML=(state.bgm&&state.sound?'<i class="fa-solid fa-music"></i>':'<i class="fa-solid fa-ban"></i>')+'<span>BGM</span>';
+  $('bgmToggle').setAttribute('aria-pressed',state.bgm&&state.sound);
+  $('themeToggle').innerHTML=(state.light?'<i class="fa-solid fa-moon"></i>':'<i class="fa-regular fa-sun"></i>')+'<span>Light Mode</span>';
+  $('themeToggle').setAttribute('aria-pressed',state.light);
+  $('speechToggle').textContent=state.speech?'Suara Melayu ON':'Suara Melayu OFF';
+  $('speechToggle').setAttribute('aria-pressed',state.speech);
+  $('manualToggle').textContent=state.manual?'Anugerah Manual ON':'Anugerah Manual OFF';
+  $('manualToggle').setAttribute('aria-pressed',state.manual);
+  $('motionToggle').textContent=state.reduced?'Kurangkan Animasi ON':'Kurangkan Animasi OFF';
+  $('motionToggle').setAttribute('aria-pressed',state.reduced);
+  $('studentId').value=state.student;
+  applyModes();
+}
 /* One module at a time. Timers continue on-page, but are paused on visibility loss and breaks. */
 const pages=['warm','cue','write','reward'],pageNames=['Senam Jari','Lihat & Ikut','Jom Tulis','Bintang Saya'];
 function go(page){if(!pages.includes(page))return;state.page=page;document.querySelectorAll('.module').forEach(x=>x.classList.toggle('active',x.id===page));document.querySelectorAll('[data-page]').forEach(b=>{b.setAttribute('aria-current',b.dataset.page===page?'page':'false')});const n=pages.indexOf(page);$('beforeStep').textContent=n?pageNames[n-1]:'Bersedia';$('currentStep').textContent=pageNames[n];$('afterStep').textContent=pageNames[Math.min(3,n+1)];$('buddyText').textContent=['Sedia panaskan jari sebelum misi!','Lihat dan ikut langkah pegangan pensel.','Kumpul huruf, elak halangan dan cipta tulisan hebat!','Setiap usaha membawa kamu lebih jauh!'][n];save()}
@@ -1203,10 +1411,10 @@ initializeMediaStudio();
     playing=false;ended=false;mission=false;objects=[];particles=[];wordIndex=0;wordProgress=0;score=0;coins=0;lives=3;streak=0;runTime=0;spawnClock=.3;lane=1;visualLane=1;jump=0;slide=0;invuln=0;shield=0;magnet=0;boost=0;shake=0;
     $('traceOverlay').hidden=true;showSplash('THE LETTER CHASE','Lari ke dunia neon, kutip huruf, elak halangan dan tulis perkataan untuk membuka misi baharu.','<i class="fa-solid fa-play"></i> START THE ADVENTURE');hud();render()
   }
-  function start(){if(ended||awaitingVerification)return;if(mission){hideSplash();return}playing=true;hideSplash();frame.scrollIntoView({behavior:'instant',block:'start'});previousTime=performance.now();canvas.focus({preventScroll:true});startLoop()}
-  function pause(silent=false){playing=false;if(!mission&&!ended&&!awaitingVerification&&!silent)showSplash('PERMAINAN DIJEDA','Sedia untuk sambung? Masa latihan juga dijeda.','<i class="fa-solid fa-play"></i> SAMBUNG');}
-  function finish(){playing=false;ended=true;mission=false;$('traceOverlay').hidden=true;meta.best=Math.max(meta.best,Math.round(score));meta.totalCoins+=coins;saveMeta();hud();showSplash('SYABAS, HERO TULISAN!','Skor: '+Math.round(score)+' · Syiling: '+coins+' · Guru akan semak latihan penulisan sebenar.','✓ LATIHAN SELESAI');}
-  function lose(){playing=false;ended=false;writeTimer.pause();meta.best=Math.max(meta.best,Math.round(score));saveMeta();showSplash('CUBA LAGI, HERO!','Nyawa habis! Skor '+Math.round(score)+'. Tekan teruskan untuk mendapat 3 nyawa dan sambung masa latihan.','↻ TERUSKAN');$('writeMessage').textContent='Nyawa habis. Cuba lagi; masa latihan dijeda.'}
+  function start(){if(ended||awaitingVerification)return;if(mission){hideSplash();return}playing=true;hideSplash();ArcadeBGM.start();frame.scrollIntoView({behavior:'instant',block:'start'});previousTime=performance.now();canvas.focus({preventScroll:true});startLoop()}
+  function pause(silent=false){playing=false;ArcadeBGM.pause();if(!mission&&!ended&&!awaitingVerification&&!silent)showSplash('PERMAINAN DIJEDA','Sedia untuk sambung? Masa latihan juga dijeda.','<i class="fa-solid fa-play"></i> SAMBUNG');}
+  function finish(){playing=false;ended=true;mission=false;ArcadeBGM.pause();$('traceOverlay').hidden=true;meta.best=Math.max(meta.best,Math.round(score));meta.totalCoins+=coins;saveMeta();hud();showSplash('SYABAS, HERO TULISAN!','Skor: '+Math.round(score)+' · Syiling: '+coins+' · Guru akan semak latihan penulisan sebenar.','✓ LATIHAN SELESAI');}
+  function lose(){playing=false;ended=false;ArcadeBGM.pause();writeTimer.pause();meta.best=Math.max(meta.best,Math.round(score));saveMeta();showSplash('CUBA LAGI, HERO!','Nyawa habis! Skor '+Math.round(score)+'. Tekan teruskan untuk mendapat 3 nyawa dan sambung masa latihan.','↻ TERUSKAN');$('writeMessage').textContent='Nyawa habis. Cuba lagi; masa latihan dijeda.'}
   function spawn(){
     const difficulty=clamp(runTime/65,0,1),occupied=new Set(),obstacleChance=.42+difficulty*.24;
     const obstacleLane=Math.floor(Math.random()*3);
@@ -1250,7 +1458,7 @@ initializeMediaStudio();
   function action(a){if(!playing||mission)return;if(a==='left')lane=Math.max(0,lane-1);if(a==='right')lane=Math.min(2,lane+1);if(a==='jump'&&slide<=0)jump=1;if(a==='slide'&&jump<=0)slide=.92}
   // Handwriting mini mission with touch / stylus / mouse drawing.
   function traceResize(){const rect=trace.getBoundingClientRect();const old=trace.width?document.createElement('canvas'):null;if(old){old.width=trace.width;old.height=trace.height;old.getContext('2d').drawImage(trace,0,0)}const pixelRatio=Math.min(devicePixelRatio||1,2);trace.width=Math.max(1,Math.round(rect.width*pixelRatio));trace.height=Math.max(1,Math.round(rect.height*pixelRatio));brush.setTransform(pixelRatio,0,0,pixelRatio,0,0);if(old)brush.drawImage(old,0,0,old.width,old.height,0,0,rect.width,rect.height)}
-  function showTrace(w){frame.scrollIntoView({behavior:'instant',block:'start'});$('traceWord').textContent=w;$('traceOverlay').hidden=false;inkPixels=0;penLast=null;$('traceHint').textContent='Salin '+w+' pada garisan. Anda boleh guna jari atau stylus.';requestAnimationFrame(()=>{traceResize();brush.clearRect(0,0,trace.clientWidth,trace.clientHeight)})}
+  function showTrace(w){ArcadeBGM.pause();frame.scrollIntoView({behavior:'instant',block:'start'});$('traceWord').textContent=w;$('traceOverlay').hidden=false;inkPixels=0;penLast=null;$('traceHint').textContent='Salin '+w+' pada garisan. Anda boleh guna jari atau stylus.';requestAnimationFrame(()=>{traceResize();brush.clearRect(0,0,trace.clientWidth,trace.clientHeight)})}
   function pt(e){const r=trace.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
   trace.addEventListener('pointerdown',e=>{e.preventDefault();inkDown=true;trace.setPointerCapture(e.pointerId);penLast=pt(e);brush.beginPath();brush.arc(penLast.x,penLast.y,2.6,0,7);brush.fillStyle='#173f91';brush.fill()});
   trace.addEventListener('pointermove',e=>{if(!inkDown)return;e.preventDefault();const p=pt(e);brush.strokeStyle='#1e56a0';brush.lineWidth=5;brush.lineCap='round';brush.lineJoin='round';brush.beginPath();brush.moveTo(penLast.x,penLast.y);brush.lineTo(p.x,p.y);brush.stroke();inkPixels+=Math.hypot(p.x-penLast.x,p.y-penLast.y);penLast=p});
@@ -1259,7 +1467,7 @@ initializeMediaStudio();
   $('traceDone').onclick=()=>{if(inkPixels<35){$('traceHint').textContent='Sila cuba tulis dengan jari atau stylus dahulu.';return}finishTrace(true)};
   $('traceSkip').onclick=()=>finishTrace(false);
   $('openTrace').onclick=()=>{if(awaitingVerification||ended)return;if(mission)return;mission=true;playing=false;showTrace(words[wordIndex%words.length]);};
-  function finishTrace(done){if(!mission)return;mission=false;$('traceOverlay').hidden=true;wordIndex++;wordProgress=0;meta.words+=done?1:0;if(done){score+=500;coins+=5;toast('HEBAT MENULIS! +500');fanfare()}else toast('TERUSKAN LATIHAN!');hud();if(!awaitingVerification&&!ended){if(writeTimer.running){playing=true;previousTime=performance.now();startLoop()}else showSplash('MISI SELESAI','Tulis perkataan berikutnya! Tekan sambung untuk berlari.','▶ SAMBUNG')}}
+  function finishTrace(done){if(!mission)return;mission=false;$('traceOverlay').hidden=true;wordIndex++;wordProgress=0;meta.words+=done?1:0;if(done){score+=500;coins+=5;toast('HEBAT MENULIS! +500');fanfare()}else toast('TERUSKAN LATIHAN!');hud();if(!awaitingVerification&&!ended){if(writeTimer.running){playing=true;ArcadeBGM.start();previousTime=performance.now();startLoop()}else showSplash('MISI SELESAI','Tulis perkataan berikutnya! Tekan sambung untuk berlari.','▶ SAMBUNG')}}
   // Touch and keyboard input, with event handlers scoped to the running module.
   document.querySelectorAll('[data-run-action]').forEach(button=>button.addEventListener('pointerdown',e=>{e.preventDefault();action(button.dataset.runAction)}));
   canvas.addEventListener('pointerdown',e=>{startPointer={x:e.clientX,y:e.clientY};});
@@ -1279,6 +1487,7 @@ initializeMediaStudio();
   window.addEventListener('resize',()=>{width();if(state.page==='write')render()});
   const oldRenderWrite=renderWrite;renderWrite=function(){oldRenderWrite();hud()};
   window.jomRunner={start,pause,reset,finish};
+  window.jomRunnerIsActive=()=>playing&&state.page==='write'&&!ended&&!mission&&!document.hidden;
   paintWorldSelection();width();reset();document.body.classList.toggle('runner-active',state.page==='write');if(state.page==='write')startLoop();
 })();
 </script>
