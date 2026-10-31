@@ -1,0 +1,12 @@
+KATA//RUN — SUPABASE CLOUD EDITION
+
+1. Buka PANDUAN_KONFIGURASI.md.
+2. Cipta projek Supabase dan jalankan supabase-setup.sql di SQL Editor.
+3. Cipta akaun guru di Authentication > Users, dan masukkan User UID dalam jadual katarun_teachers (lihat panduan).
+4. Isi Project URL + publishable key dalam supabase-config.js. Jangan masukkan secret key.
+5. Muat naik SEMUA fail pakej ke hosting HTTPS (contohnya Netlify/GitHub Pages).
+6. Guru log masuk dalam Studio Guru > Supabase Cloud Sync, kemudian muat naik video.
+7. Pengguna lain buka URL yang sama; media disegerakkan automatik dalam ~30 saat atau lebih pantas dengan Realtime.
+
+PERHATIAN: Bucket media ialah PUBLIC READ; jangan muat naik rakaman peribadi murid.
+Kredensial Supabase sebenar belum disertakan. Sambungan cloud tidak boleh aktif sehingga langkah di atas selesai.
